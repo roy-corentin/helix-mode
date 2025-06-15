@@ -163,8 +163,10 @@ long word at point.  Otherwise, continue the existing region.
 If the point is at the end of a line, it first searches for
 the next character before moving to the next long word."
   (interactive)
+  (when (use-region-p) (forward-char))
   (helix--clear-highlights)
-  (when (= (pos-eol) (point))
+  (when (>= (point) (- (pos-eol) 1))
+    (forward-line)
     (re-search-forward "\\(.\\)")
     (beginning-of-line))
   (let ((beg (point)))
@@ -182,7 +184,7 @@ If the point is at the beginning of a line, it first searches for
 the previous character before moving to the previous long word."
   (interactive)
   (helix--clear-highlights)
-  (when (= (pos-bol) (point))
+  (when (bolp)
     (re-search-backward "\\(.\\)")
     (end-of-line))
   (let ((beg (point)))

@@ -127,9 +127,9 @@ A long word is any sequence of non-whitespace characters.  With prefix
 argument ARG, move forward if positive, or move backwards if negative."
   (interactive "^p")
   (if (natnump arg)
-      (when (re-search-forward "\\( \\S-\\)" (- (pos-eol) 1) 'move)
-        (backward-char 2))
-    (when (re-search-backward "\\( \\S-\\)" (pos-bol) 'move)
+      (when (re-search-forward "[ \t]+" (- (pos-eol) 1) 'move arg)
+        (backward-char))
+    (when (re-search-backward "\\([ \t]\\S-\\)" (pos-bol) 'move)
       (forward-char))))
 
 (defun helix-forward-word ()

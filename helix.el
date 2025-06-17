@@ -140,9 +140,9 @@ A long word is any sequence of non-whitespace characters.  With prefix
 argument ARG, move forward if positive, or move backwards if negative."
   (interactive "^p")
   (if (natnump arg)
-      (when (re-search-forward "[ \t]\\S-" (- (pos-eol) 1) 'move arg)
-        (goto-char (match-beginning 0)))
-    (when (re-search-backward "[ \t]\\S-" (pos-bol) 'move)
+      (when (re-search-forward "\\S-[ \t]+" (- (pos-eol) 1) 'move arg)
+        (backward-char))
+    (when  (re-search-backward "[ \t]+\\S-" (pos-bol) 'move)
       (forward-char))))
 
 (defun helix-forward-word ()
@@ -163,32 +163,25 @@ argument ARG, move forward if positive, or move backwards if negative."
 
 (defun helix-forward-long-word ()
   "Move to next long word.
-If the point is at the end of a line, it first searches for the next
-character before moving to the next long word."
+If the point is at the end of a line, it first searches for the
+non-empty line before moving to the next long word."
   (interactive)
-  (when (use-region-p) (forward-char))
-  (helix--clear-highlights)
-  (if (eobp)
-      (message "End of buffer")
+  (unless (eobp)
+    (when (eql (char-after (point)) ?\s) (forward-char))
     (while (looking-at-p ".?$") (forward-line))
-    (let ((beg (point)))
-      (helix--search-long-word 1)
-      (unless (use-region-p)
-        (push-mark beg t 'activate)))))
+    (helix--with-movement-surround
+     (helix--search-long-word 1))))
 
 (defun helix-backward-long-word ()
   "Move to previous long word.
 If the point is at the beginning of a line, it first searches for the
 previous character before moving to the previous long word."
   (interactive)
-  (helix--clear-highlights)
-  (if (bobp)
-      (message "Beginning of buffer")
-    (when (bolp) (re-search-backward ".$"))
-    (let ((beg (point)))
-      (helix--search-long-word -1)
-      (unless (use-region-p)
-        (push-mark beg t 'activate)))))
+  (unless (bobp)
+    (when (use-region-p) (backward-char))
+    (while (bolp) (re-search-backward "[^\n]"))
+    (helix--with-movement-surround
+     (helix--search-long-word -1))))
 
 (defun helix-go-beginning-line ()
   "Go to beginning of line."

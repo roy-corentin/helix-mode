@@ -163,12 +163,8 @@ argument ARG, move forward if positive, or move backwards if negative."
 
 (defun helix-forward-long-word ()
   "Move to next long word.
-
-If `helix--current-selection' is nil, create a region to the next
-long word at point.  Otherwise, continue the existing region.
-
-If the point is at the end of a line, it first searches for
-the next character before moving to the next long word."
+If the point is at the end of a line, it first searches for the next
+character before moving to the next long word."
   (interactive)
   (when (use-region-p) (forward-char))
   (helix--clear-highlights)
@@ -182,12 +178,8 @@ the next character before moving to the next long word."
 
 (defun helix-backward-long-word ()
   "Move to previous long word.
-
-If `helix--current-selection' is nil, create a region to the previous
-long word at point.  Otherwise, continue the existing region.
-
-If the point is at the beginning of a line, it first searches for
-the previous character before moving to the previous long word."
+If the point is at the beginning of a line, it first searches for the
+previous character before moving to the previous long word."
   (interactive)
   (helix--clear-highlights)
   (if (bobp)

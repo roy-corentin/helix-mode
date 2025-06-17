@@ -46,6 +46,14 @@
     (helix-forward-long-word)
     (should (equal (point) (string-match "a " (buffer-string)))))
 
+  ;; On whitespace skip it
+  (with-temp-buffer
+    (insert "This is a test-string to verify helix functionality.")
+    (goto-char 5)
+    (helix-forward-long-word)
+    (should (equal (- (region-end) (region-beginning)) 2))
+    (should (equal (point) (string-match "a " (buffer-string)))))
+
   ;; Case at end of line
   (with-temp-buffer
     (insert "This is a test sentence.\n\nNext sentence follows.")
@@ -72,7 +80,8 @@
       (should (equal (point) initial-point)))))
 
 (ert-deftest helix-test-forward-long-word-whitespaces-between-lines ()
-  "Test `helix-forward-long-word' behavior with line full of whitespaces."
+  "Test `helix-forward-long-word' behavior with line full of whitespaces.
+It should select only the whitespaces."
   (with-temp-buffer
     (insert "This is a test sentence.\n   \nNext sentence follows.")
     (goto-char 24)
@@ -97,6 +106,14 @@
     (helix-backward-long-word)
     ;; Check if point moved correctly
     (should (equal (point) (string-match "elix_functionality." (buffer-string)))))
+
+  ;; On whitespace keep it
+  (with-temp-buffer
+    (insert "This is a test-string to verify helix functionality.")
+    (goto-char 8)
+    (helix-backward-long-word)
+    (should (equal (- (region-end) (region-beginning)) 3))
+    (should (equal (point) (string-match "s a" (buffer-string)))))
 
   ;; Case at beginning of line
   (with-temp-buffer
@@ -123,7 +140,8 @@
       (should (equal (point) initial-point)))))
 
 (ert-deftest helix-test-backward-long-word-whitespaces-between-lines ()
-  "Test `helix-backward-long-word' behavior with line full of whitespaces."
+  "Test `helix-backward-long-word' behavior with line full of whitespaces.
+It should select only the whitespaces."
   (with-temp-buffer
     (insert "This is a test sentence.\n   \nNext sentence follows.")
     (goto-char 29)
